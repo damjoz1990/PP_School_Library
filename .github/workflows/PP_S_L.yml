@@ -27,15 +27,17 @@ jobs:
         run: |
           echo "Testing authentication..."
           echo "Environment: https://orgbefa339d.crm.dynamics.com"
-          echo "User: damjoz1990@learnwithpowerup.onmicrosoft.com"
-          echo "Password secret exists: ${{ secrets.PASSWORD != '' }}"
+          echo "Application ID exists: ${{ secrets.APPLICATION_ID != '' }}"
+          echo "Client Secret exists: ${{ secrets.CLIENT_SECRET != '' }}"
+          echo "Tenant ID exists: ${{ secrets.TENANT_ID != '' }}"
 
       - name: Export Solution
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
           environment-url: 'https://orgbefa339d.crm.dynamics.com'
-          user-name: 'damjoz1990@learnwithpowerup.onmicrosoft.com'
-          password-secret: ${{ secrets.PASSWORD }}
+          application-id: ${{ secrets.APPLICATION_ID }}
+          client-secret: ${{ secrets.CLIENT_SECRET }}
+          tenant-id: ${{ secrets.TENANT_ID }}
           solution-name: 'School Library'
           solution-output-file: 'SchoolLibrary.zip'
           working-directory: 'out'
@@ -91,8 +93,9 @@ jobs:
         uses: microsoft/powerplatform-actions/publish-solution@v1
         with:
           environment-url: 'https://orgbefa339d.crm.dynamics.com'
-          user-name: 'damjoz1990@learnwithpowerup.onmicrosoft.com'
-          password-secret: ${{ secrets.PASSWORD }}
+          application-id: ${{ secrets.APPLICATION_ID }}
+          client-secret: ${{ secrets.CLIENT_SECRET }}
+          tenant-id: ${{ secrets.TENANT_ID }}
 
       - name: Prepare solution changes for check-in
         uses: microsoft/powerplatform-actions/branch-solution@v1
