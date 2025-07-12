@@ -17,34 +17,42 @@ jobs:
     - name: Install Power Platform Tools
       uses: microsoft/powerplatform-actions/actions-install@v1
     
+    - name: Test Power Platform Connection
+      run: |
+        echo "Testing connection to Power Platform..."
+        echo "Environment URL: https://myenv.crm.dynamics.com"
+        echo "User: me@myenv.onmicrosoft.com"
+        echo "Password secret exists: ${{ secrets.PASSWORD != '' }}"
+    
     - name: Export Solution
       uses: microsoft/powerplatform-actions/export-solution@v1
       with:
-        environment-url: 'https://myenv.crm.dynamics.com'
-        user-name: 'me@myenv.onmicrosoft.com'
+        environment-url: 'https://orgbefa339d.crm.dynamics.com'
+        user-name: 'damjoz1990@learnwithpowerup.onmicrosoft.com'
         password-secret: ${{ secrets.PASSWORD }}
-        solution-name: aSolution
-        solution-output-file: 'aSolution.zip'
+        solution-name: 'School Library'
+        solution-output-file: 'SchoolLibrary.zip'
         working-directory: 'out'
+      continue-on-error: true
     
     - name: Unpack Solution
       uses: microsoft/powerplatform-actions/unpack-solution@v1
       with:
-        solution-file: 'out/aSolution.zip'
-        solution-folder: 'out/solutions/aSolution'
+        solution-file: 'out/SchoolLibrary.zip'
+        solution-folder: 'out/solutions/SchoolLibrary'
         solution-type: 'Unmanaged'
         overwrite-files: true
     
     - name: Publish Solution
       uses: microsoft/powerplatform-actions/publish-solution@v1
       with:
-        environment-url: 'https://myenv.crm.dynamics.com'
-        user-name: 'me@myenv.onmicrosoft.com'
+        environment-url: 'https://orgbefa339d.crm.dynamics.com'
+        user-name: 'damjoz1990@learnwithpowerup.onmicrosoft.com'
         password-secret: ${{ secrets.PASSWORD }}
     
     - name: Prepare solution changes for check-in into source control
       uses: microsoft/powerplatform-actions/branch-solution@v1
       with:
-        solution-folder: 'out/solutions/aSolution'
-        solution-target-folder: 'src/solutions/aSolution'
+        solution-folder: 'out/solutions/SchoolLibrary'
+        solution-target-folder: 'src/solutions/SchoolLibrary'
         token: ${{ secrets.GIT_SL_TOKEN }}
