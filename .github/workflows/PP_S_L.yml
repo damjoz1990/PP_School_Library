@@ -1,3 +1,12 @@
+name: Power Platform School Library
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Pozwala na ręczne uruchomienie
+
 jobs:
   build:
     runs-on: self-hosted
@@ -21,8 +30,8 @@ jobs:
     - name: Unpack Solution
       uses: microsoft/powerplatform-actions/unpack-solution@v1
       with:
-        solution-file: 'out/aSolution.zip'  # Poprawiona nazwa pliku
-        solution-folder: 'out/solutions/aSolution'  # Folder gdzie się rozpakuje
+        solution-file: 'out/aSolution.zip'
+        solution-folder: 'out/solutions/aSolution'
         solution-type: 'Unmanaged'
         overwrite-files: true
     
@@ -36,6 +45,6 @@ jobs:
     - name: Prepare solution changes for check-in into source control
       uses: microsoft/powerplatform-actions/branch-solution@v1
       with:
-        solution-folder: 'out/solutions/aSolution'  # Źródłowy folder (rozpakowany)
-        solution-target-folder: 'src/solutions/aSolution'  # Docelowy folder w repo
+        solution-folder: 'out/solutions/aSolution'
+        solution-target-folder: 'src/solutions/aSolution'
         token: ${{ secrets.GIT_SL_TOKEN }}
