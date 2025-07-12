@@ -32,7 +32,7 @@ jobs:
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
           environment-url: 'https://orgbefa339d.crm.dynamics.com'
-          application-id: ${{ secrets.APPLICATION_ID }}
+          app-id: ${{ secrets.APPLICATION_ID }}
           client-secret: ${{ secrets.CLIENT_SECRET }}
           tenant-id: ${{ secrets.TENANT_ID }}
           solution-name: 'SchoolLibrary'
