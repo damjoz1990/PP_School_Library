@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest  # Zmienione z self-hosted na GitHub runner
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
