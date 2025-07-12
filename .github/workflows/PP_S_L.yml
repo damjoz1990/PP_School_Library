@@ -14,14 +14,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Create output directory
+        run: mkdir -p out
+
       - name: Install Power Platform Tools
         uses: microsoft/powerplatform-actions/actions-install@v1
-
-      - name: Create output directory
-        run: |
-          mkdir -p out
-          echo "✅ Created out/ directory"
-          ls -la
 
       - name: Test Authentication First
         run: |
@@ -38,10 +35,9 @@ jobs:
           application-id: ${{ secrets.APPLICATION_ID }}
           client-secret: ${{ secrets.CLIENT_SECRET }}
           tenant-id: ${{ secrets.TENANT_ID }}
-          solution-name: 'School Library'
+          solution-name: 'SchoolLibrary'
           solution-output-file: 'SchoolLibrary.zip'
           working-directory: 'out'
-        continue-on-error: true
 
       - name: Debug - Check export results
         run: |
@@ -51,33 +47,18 @@ jobs:
           echo "Contents of current directory:"
           ls -la
           echo "Contents of out/ directory:"
-          ls -la out/ || echo "❌ out/ directory does not exist"
+          ls -la out/ || echo "out/ directory does not exist"
           echo "Looking for SchoolLibrary.zip:"
-          find . -name "SchoolLibrary.zip" -type f 2>/dev/null || echo "❌ SchoolLibrary.zip not found anywhere"
-          echo "Looking for any .zip files:"
-          find . -name "*.zip" -type f 2>/dev/null || echo "❌ No .zip files found"
-          echo "Checking for any error files:"
-          find . -name "*.log" -type f 2>/dev/null || echo "No log files found"
-          echo "=== END DEBUG ==="
-
-      - name: Try manual pac command
-        run: |
-          echo "Trying manual pac command for debugging..."
-          export PATH="/tmp/powerplatform-actions-*/pac:$PATH"
-          pac --version
-          echo "Attempting to authenticate..."
-          pac auth create --url https://orgbefa339d.crm.dynamics.com --username damjoz1990@learnwithpowerup.onmicrosoft.com --password "${{ secrets.PASSWORD }}" --name debug-profile
-          echo "Listing solutions..."
-          pac solution list --profile debug-profile || echo "Failed to list solutions"
-        continue-on-error: true
+          find . -name "SchoolLibrary.zip" -type f 2>/dev/null || echo "SchoolLibrary.zip not found anywhere"
 
       - name: Check if solution file exists
         run: |
           if [ -f "out/SchoolLibrary.zip" ]; then
-            echo "✅ SchoolLibrary.zip found - $(ls -lh out/SchoolLibrary.zip)"
+            echo "✅ SchoolLibrary.zip found"
+            ls -la out/SchoolLibrary.zip
           else
             echo "❌ SchoolLibrary.zip NOT found"
-            echo "This indicates the export failed silently"
+            echo "Stopping workflow - cannot proceed without solution file"
             exit 1
           fi
 
@@ -89,15 +70,7 @@ jobs:
           solution-type: 'Unmanaged'
           overwrite-files: true
 
-      - name: Publish Solution
-        uses: microsoft/powerplatform-actions/publish-solution@v1
-        with:
-          environment-url: 'https://orgbefa339d.crm.dynamics.com'
-          application-id: ${{ secrets.APPLICATION_ID }}
-          client-secret: ${{ secrets.CLIENT_SECRET }}
-          tenant-id: ${{ secrets.TENANT_ID }}
-
-      - name: Prepare solution changes for check-in
+      - name: Prepare solution changes for check-in into source control
         uses: microsoft/powerplatform-actions/branch-solution@v1
         with:
           solution-folder: 'out/solutions/SchoolLibrary'
