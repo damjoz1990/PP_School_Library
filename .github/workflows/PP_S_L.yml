@@ -20,21 +20,20 @@ jobs:
       - name: Install Power Platform Tools
         uses: microsoft/powerplatform-actions/actions-install@v1
 
-      - name: Test Authentication First
+      - name: Test Authentication
         run: |
           echo "Testing authentication..."
           echo "Environment: https://orgbefa339d.crm.dynamics.com"
-          echo "Application ID exists: ${{ secrets.APPLICATION_ID != '' }}"
-          echo "Client Secret exists: ${{ secrets.CLIENT_SECRET != '' }}"
-          echo "Tenant ID exists: ${{ secrets.TENANT_ID != '' }}"
+          echo "User: damjoz1990@learnwithpowerup.onmicrosoft.com"
+          echo "Password exists: ${{ secrets.PASSWORD != '' }}"
+          echo "Git token exists: ${{ secrets.GIT_SL_TOKEN != '' }}"
 
       - name: Export Solution
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
           environment-url: 'https://orgbefa339d.crm.dynamics.com'
-          app-id: ${{ secrets.APPLICATION_ID }}
-          client-secret: ${{ secrets.CLIENT_SECRET }}
-          tenant-id: ${{ secrets.TENANT_ID }}
+          user-name: 'damjoz1990@learnwithpowerup.onmicrosoft.com'
+          password-secret: ${{ secrets.PASSWORD }}
           solution-name: 'SchoolLibrary'
           solution-output-file: 'SchoolLibrary.zip'
           working-directory: 'out'
@@ -42,14 +41,12 @@ jobs:
       - name: Debug - Check export results
         run: |
           echo "=== DEBUGGING EXPORT RESULTS ==="
-          echo "Current directory:"
-          pwd
-          echo "Contents of current directory:"
+          echo "Current directory contents:"
           ls -la
-          echo "Contents of out/ directory:"
+          echo "Out directory contents:"
           ls -la out/ || echo "out/ directory does not exist"
           echo "Looking for SchoolLibrary.zip:"
-          find . -name "SchoolLibrary.zip" -type f 2>/dev/null || echo "SchoolLibrary.zip not found anywhere"
+          find . -name "SchoolLibrary.zip" -type f 2>/dev/null || echo "SchoolLibrary.zip not found"
 
       - name: Check if solution file exists
         run: |
@@ -58,7 +55,7 @@ jobs:
             ls -la out/SchoolLibrary.zip
           else
             echo "❌ SchoolLibrary.zip NOT found"
-            echo "Stopping workflow - cannot proceed without solution file"
+            echo "Export failed - stopping workflow"
             exit 1
           fi
 
@@ -70,7 +67,7 @@ jobs:
           solution-type: 'Unmanaged'
           overwrite-files: true
 
-      - name: Prepare solution changes for check-in into source control
+      - name: Prepare solution changes for check-in
         uses: microsoft/powerplatform-actions/branch-solution@v1
         with:
           solution-folder: 'out/solutions/SchoolLibrary'
